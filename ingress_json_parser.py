@@ -57,11 +57,54 @@ class PortalDetailParser:
         # self.result[17]
 
 
+class MessageMarkupParser:
+    def __init__(self, markup):
+        self.secure = None
+        self.sender = None
+        self.text1 = None
+        self.text2 = None
+        self.at_player = None
+        self.player = None
+        self.portal = None
+        self.portal_name = None
+        self.portal_team = None
+        self.portal_address = None
+        self.portal_latE6 = None
+        self.portal_lngE6 = None
+        text_count = 0
+        for markup_item in markup:
+            if markup_item[0] == "SECURE":
+                self.secure = markup_item[1]['plain']
+            if markup_item[0] == "SENDER":
+                self.sender = markup_item[1]['plain'][:-2]
+            if markup_item[0] == "AT_PLAYER":
+                self.at_player = markup_item[1]['plain']
+            if markup_item[0] == "PLAYER":
+                self.player = markup_item[1]['plain']
+
+            if markup_item[0] == "PORTAL":
+                self.portal = markup_item[1]['plain']
+                self.portal_name = markup_item[1]['name']
+                self.portal_team = markup_item[1]['team']
+                self.portal_address = markup_item[1]['address']
+                self.portal_latE6 = markup_item[1]['latE6']
+                self.portal_lngE6 = markup_item[1]['lngE6']
+
+            if markup_item[0] == "TEXT":
+                if text_count == 0:
+                    self.text1 = markup_item[1]['plain']
+                    text_count += 1
+                elif text_count == 1:
+                    self.text2 = markup_item[1]['plain']
+                    text_count += 1
+
+
 # get by api getPlexts with par ascendingTimestampOrder,
 #  maxLatE6, maxLngE6, minLatE6, minLngE6, maxTimestampMs, minTimestampMs, tab, v
 class MessageParser:
     def __init__(self, result_json):
         self.agent = None
+        self.message_type = None
         self.guid = result_json[0]
         self.time_stamp = result_json[1]
         plext = result_json[2]['plext']
@@ -69,105 +112,83 @@ class MessageParser:
         self.plext_type = plext['plextType']
         self.team = plext['team']
         self.categories = plext['categories']
-        self.portal_name = None
-        self.portal_address = None
-        self.portal_lat = None
-        self.portal_lng = None
-        self.portal_plain = None
-        self.markup = plext['markup']
-        self.message_type = self.get_message_type()
+        self.markup = MessageMarkupParser(plext['markup'])
+        self.deal_markup()
 
-    def get_message_type(self):
+    def deal_markup(self):
+        # alert message
         if self.categories == 4:
-            # alert message
-            if len(self.markup) == 4 and self.markup[0][0] == "TEXT" and self.markup[1][0] == "PORTAL" and \
-                            self.markup[2][0] == "TEXT" and self.markup[3][0] == "PLAYER":
-                # attack alert
-                if self.markup[2][1]['plain'] == " is under attack by ":
-                    if self.markup[3][0] == "PLAYER":
-                        self.agent = self.markup[3][1]['plain']
-                        return "alert_under_attack"
-                # neutralize alert
-                elif self.markup[2][1]['plain'] == " neutralized by ":
-                    if self.markup[3][0] == "PLAYER":
-                        self.agent = self.markup[3][1]['plain']
-                        return "alert_neutralize"
+            # alert_under_attack
+            if self.markup.text2 == " is under attack by ":
+                self.message_type = "alert_under_attack"
+                self.agent = self.markup.player
+            # alert_neutralize
+            elif self.markup.text2 == " neutralized by ":
+                self.message_type = "alert_neutralize"
+                self.agent = self.markup.player
+            else:
+                raise ValueError("unknown alert message")
+        # faction message
         elif self.categories == 2:
-            # faction message
-            if self.markup[2][0] == "TEXT":
-                if self.markup[2][1]['plain'] == "has completed training.":
-                    # !!! maybe send by agent, do not trust it as sent by system
-                    #  for determine whether he(or she) is a new agent.
-                    if self.markup[1][0] == "SENDER":
-                        self.agent = self.markup[1][1]['plain'][:-2]
-                        return "faction_complete_training"
-                    else:
-                        raise ValueError("unknown message type")
-                elif len(self.markup) == 3 and self.markup[1][0] == "SENDER":
-                    self.agent = self.markup[1][1]['plain'][:-2]
-                    return "faction_message"
-                elif self.markup[3][0] == "AT_PLAYER":
-                    # at message
-                    if self.markup[1][0] == "SENDER":
-                        self.agent = self.markup[1][1]['plain'][:-2]
-                        return "faction_at_message"
-                    else:
-                        raise ValueError("unknown message type")
+            # faction player send messages
+            if self.markup.sender:
+                self.agent = self.markup.sender
+                # faction_complete_training
+                # weird, complete training message is 'sender', not player
+                if (self.markup.text1 == "has completed training." or
+                            self.markup.text2 == "has completed training."):
+                    self.message_type = "faction_complete_training"
+                # faction_at_message
+                elif self.markup.at_player:
+                    self.message_type = "faction_at_message"
+                # faction_message
                 else:
-                    raise ValueError("unknown message type")
-            elif self.markup[3][0] == "TEXT":
-                if self.markup[3][1]['plain'] == " captured their first Portal.":
-                    if self.markup[2][0] == "PLAYER":
-                        self.agent = self.markup[2][1]['plain']
-                        return "faction_first_portal"
-                    else:
-                        raise ValueError("unknown message type")
-
-                elif self.markup[3][1]['plain'] == " created their first Control Field":
-                    if self.markup[2][0] == "PLAYER":
-                        self.agent = self.markup[1][1]['plain']
-                        return "faction_first_field"
-                    else:
-                        raise ValueError("unknown message type")
-                elif self.markup[3][1]['plain'] == " created their first Link.":
-                    if self.markup[2][0] == "PLAYER":
-                        self.agent = self.markup[1][1]['plain']
-                        return "faction_first_link"
-                    else:
-                        raise ValueError("unknown message type")
+                    self.message_type = "faction_message"
+            # player action alert messages
+            elif self.markup.player:
+                self.agent = self.markup.player
+                # faction_first_portal
+                if (self.markup.text1 == " captured their first Portal." or
+                            self.markup.text2 == " captured their first Portal."):
+                    self.message_type = "faction_first_portal"
+                # faction_first_link
+                elif (self.markup.text1 == " created their first Link." or
+                              self.markup.text2 == " created their first Link."):
+                    self.message_type = "faction_first_link"
+                # faction_first_field
+                elif (self.markup.text1 == " created their first Control Field" or
+                              self.markup.text2 == " created their first Control Field"):
+                    self.message_type = "faction_first_field"
+                else:
+                    raise ValueError("unknown player action alert message")
+            else:
+                raise ValueError("unknown faction message")
+        # common messages
         elif self.categories == 1:
-            # common messages
-            if self.plext_type == "SYSTEM_BROADCAST":
-                if self.markup[0][0] == "PLAYER":
-                    self.agent = self.markup[0][1]['plain']
-                    if self.markup[2][0] == "PORTAL":
-                        self.portal_name = self.markup[2][1]['name']
-                        self.portal_plain = self.markup[2][1]['plain']
-                        self.portal_address = self.markup[2][1]['address']
-                        self.portal_lat = self.markup[2][1]['latE6']
-                        self.portal_lng = self.markup[2][1]['lngE6']
-                        if self.markup[1][0] == "TEXT":
-                            if self.markup[1][1]['plain'] == " captured ":
-                                return 'common_capture'
-                            elif self.markup[1][1]['plain'] == " deployed a Resonator on ":
-                                return 'common_deploy_resonator'
-                            elif self.markup[1][1]['plain'] == " destroyed a Resonator on ":
-                                return 'common_destroy_resonator'
-                            # TODO: deploy mod
-
-                            # TODO: destroy mod
-
-                            elif self.markup[1][1]['plain'] == " linked ":
-                                return 'common_link'
-            elif self.plext_type == "PLAYER_GENERATED":
-                if self.markup[0][0] == 'SENDER' and self.markup[1][0] == 'TEXT':
-                    if len(self.markup) == 2:
-                        self.agent = self.markup[0][1]['plain'][:-2]
-                        return 'common_message'
-                    elif len(self.markup) == 4 and self.markup[2][0] == "AT_PLAYER" and self.markup[3][0] == "TEXT":
-                        self.agent = self.markup[0][1]['plain'][:-2]
-                        return 'common_at_message'
-        return 'unknown_type'
+            # player send messages
+            if self.markup.sender:
+                self.agent = self.markup.sender
+                # common_at_message
+                if self.markup.at_player:
+                    self.message_type = "common_at_message"
+                else:
+                    self.message_type = "common_message"
+            # system common messages
+            elif self.markup.player:
+                self.agent = self.markup.player
+                #
+                if self.markup.text1 == " linked " and self.markup.text2 == " to ":
+                    self.message_type = "common_link"
+                elif self.markup.text1 == " destroyed a Resonator on ":
+                    self.message_type = "common_destroy_resonator"
+                elif self.markup.text1 == " deployed a Resonator on ":
+                    self.message_type = "common_deploy_resonator"
+                elif self.markup.text1 == " captured ":
+                    self.message_type = "common_capture"
+                else:
+                    raise ValueError("unknown common system message")
+            else:
+                raise ValueError("unknown common message")
 
 
 # get by api getEntities with par tileKeys list, v
