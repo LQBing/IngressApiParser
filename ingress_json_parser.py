@@ -185,6 +185,10 @@ class MessageParser:
                     self.message_type = "common_deploy_resonator"
                 elif self.markup.text1 == " captured ":
                     self.message_type = "common_capture"
+                elif self.markup.text1 == " created a Control Field @":
+                    self.message_type = "common_create_control_field"
+                elif self.markup.text1 == " destroyed the Link ":
+                    self.message_type = "common_destroy_link"
                 else:
                     raise ValueError("unknown common system message")
             else:

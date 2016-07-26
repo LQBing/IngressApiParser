@@ -794,4 +794,123 @@ alert_neutralize = '{"result":["26d5774737f5434b947e12e09cd3b600.d",146884620012
 # ]
 
 
+common_create_control_field = '{"result":["0976317af1854a769cd83982721e69fd.d", 1469526082810, {"plext": {"text": "whale757 created a Control Field @\u602a\u9f99 (4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000) +1 MUs", "markup": [["PLAYER", {"plain": "whale757", "team": "RESISTANCE"}], ["TEXT", {"plain": " created a Control Field @"}], ["PORTAL", {"name": "\u602a\u9f99", "plain": "\u602a\u9f99 (4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000)", "team": "RESISTANCE", "latE6": 24446034, "address": "4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000", "lngE6": 118066762}], ["TEXT", {"plain": " +"}], ["TEXT", {"plain": "1"}], ["TEXT", {"plain": " MUs"}]], "plextType": "SYSTEM_BROADCAST", "categories": 1, "team": "RESISTANCE"}}], "type": "common_create_control_field"}'
 
+
+# [
+#     "0976317af1854a769cd83982721e69fd.d",
+#     1469526082810,
+#     {
+#         "plext": {
+#             "text": "whale757 created a Control Field @怪龙 (4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000) +1 MUs",
+#             "markup": [
+#                 [
+#                     "PLAYER",
+#                     {
+#                         "plain": "whale757",
+#                         "team": "RESISTANCE"
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": " created a Control Field @"
+#                     }
+#                 ],
+#                 [
+#                     "PORTAL",
+#                     {
+#                         "name": "怪龙",
+#                         "plain": "怪龙 (4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000)",
+#                         "team": "RESISTANCE",
+#                         "latE6": 24446034,
+#                         "address": "4 Bi Shan Lu, Siming Qu, Xiamen Shi, Fujian Sheng, China, 361000",
+#                         "lngE6": 118066762
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": " +"
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": "1"
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": " MUs"
+#                     }
+#                 ]
+#             ],
+#             "plextType": "SYSTEM_BROADCAST",
+#             "categories": 1,
+#             "team": "RESISTANCE"
+#         }
+#     }
+# ]
+
+
+common_destroy_link =  '{"result":["501a95759fd54338bcecc58d913b8a43.d", 1469526500388, {"plext": {"text": "Aldebaran11 destroyed the Link \u62db\u8d22\u5c0f\u8c61 (Roundabout South Road, Siming, Xiamen, Fujian, China) to \u7889\u5821\u4e0a\u7684\u6625\u98ce (300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005)", "markup": [["PLAYER", {"plain": "Aldebaran11", "team": "ENLIGHTENED"}], ["TEXT", {"plain": " destroyed the Link "}], ["PORTAL", {"name": "\u62db\u8d22\u5c0f\u8c61", "plain": "\u62db\u8d22\u5c0f\u8c61 (Roundabout South Road, Siming, Xiamen, Fujian, China)", "team": "RESISTANCE", "latE6": 24431610, "address": "Roundabout South Road, Siming, Xiamen, Fujian, China", "lngE6": 118110537}], ["TEXT", {"plain": " to "}], ["PORTAL", {"name": "\u7889\u5821\u4e0a\u7684\u6625\u98ce", "plain": "\u7889\u5821\u4e0a\u7684\u6625\u98ce (300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005)", "team": "RESISTANCE", "latE6": 24430944, "address": "300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005", "lngE6": 118115099}]], "plextType": "SYSTEM_BROADCAST", "categories": 1, "team": "RESISTANCE"}}], "type": "common_destroy_link"}'
+
+
+
+# [
+#     "501a95759fd54338bcecc58d913b8a43.d",
+#     1469526500388,
+#     {
+#         "plext": {
+#             "text": "Aldebaran11 destroyed the Link 招财小象 (Roundabout South Road, Siming, Xiamen, Fujian, China) to 碉堡上的春风 (300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005)",
+#             "markup": [
+#                 [
+#                     "PLAYER",
+#                     {
+#                         "plain": "Aldebaran11",
+#                         "team": "ENLIGHTENED"
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": " destroyed the Link "
+#                     }
+#                 ],
+#                 [
+#                     "PORTAL",
+#                     {
+#                         "name": "招财小象",
+#                         "plain": "招财小象 (Roundabout South Road, Siming, Xiamen, Fujian, China)",
+#                         "team": "RESISTANCE",
+#                         "latE6": 24431610,
+#                         "address": "Roundabout South Road, Siming, Xiamen, Fujian, China",
+#                         "lngE6": 118110537
+#                     }
+#                 ],
+#                 [
+#                     "TEXT",
+#                     {
+#                         "plain": " to "
+#                     }
+#                 ],
+#                 [
+#                     "PORTAL",
+#                     {
+#                         "name": "碉堡上的春风",
+#                         "plain": "碉堡上的春风 (300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005)",
+#                         "team": "RESISTANCE",
+#                         "latE6": 24430944,
+#                         "address": "300 Cengcuo an West Road, Siming, Xiamen, Fujian, China, 361005",
+#                         "lngE6": 118115099
+#                     }
+#                 ]
+#             ],
+#             "plextType": "SYSTEM_BROADCAST",
+#             "categories": 1,
+#             "team": "RESISTANCE"
+#         }
+#     }
+# ]
